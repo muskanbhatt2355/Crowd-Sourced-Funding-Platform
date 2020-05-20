@@ -1,0 +1,26 @@
+extends admin_layout
+
+block header
+block content
+  .dashboard
+    .user
+      h1 You can easily delete an existing car model!
+      
+      .block.stripe
+        .block.stripe
+        form.payout(action='/cars/car_dash', method='GET', autocomplete='off')
+          input(class='primary' type='submit', value='Go back to the dashboard')
+
+  h3 You can also refer to the car dashboard for the required details.
+  h1.title.short-form Fill in the car details required:
+  section.form.login
+    form(action='/cars/delete_car' method='POST', autocomplete='off')
+      fieldset
+        .row(label = 'Choose Car VIN:')
+          select(id = 'vin_list', name='vin_id')
+            option(value='') Select:
+            each car in cars
+              option(name= car.vin_id ,value = car.vin_id) #{car.vin_id}
+      input(class='primary', type='submit', value='Delete Car')
+
+              

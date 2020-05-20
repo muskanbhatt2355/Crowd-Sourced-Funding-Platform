@@ -1,0 +1,28 @@
+extends layout
+
+block header
+  .intro
+    .pilots
+      h1 Get ready to go miles with us
+      h3 Docuwind Rental Cars is the world’s leading car renting platform: join our team of subscribers to help people travel.
+      if pilot && pilot.stripeAccountId
+        a.button.primary(href='/pilots/dashboard') View dashboard
+      else
+        a.button.primary(href='/pilots/signup') Become a partner
+
+block content
+  .features
+    section.schedule
+      h3 Subscribe to as many points as you want
+      p You can be a part of the Docuwind car-rentals investors' team anytime—you pick your own investment. invest as little or as much as you want.
+    section.earnings
+      h3 Earn more with each trip
+      p Cash out whenever you want and get instant transfers to your account.
+    section.app
+      h3 Augmented reality app
+      p Ready, set, download. Get weather updates, directions, and 24/7 support. Don’t have a smartphone? No problem.
+
+block footer
+  .annotation.landing
+    a.stripe(href='https://stripe.com') Stripe
+    
