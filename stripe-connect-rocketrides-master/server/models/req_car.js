@@ -7,14 +7,14 @@ const Schema = mongoose.Schema;
 mongoose.Promise = global.Promise;
 
 // Define the Ride schema.
-const CarSchema = new Schema({
-  car_id: { type: Number, unique: true},
-  vin_id: { type: String , minlength: 17, maxlength: 17},
-  mod_name: { type: String, default: 'Toyota Corolla' },
-  year: {type: Number, default: new Date().getFullYear()},
-  month: { type: String, default: 'January' },
-  revenue: { type: Number, default: '0' },
+const ReqCarSchema = new Schema({
+  car_id:Number,
+  vin_id: String,
+  mod_name: String,
+  month: String,
+  revenue: Number,
   total_points: Number,
+  partner_points: Number,
 });
 
 // Return the ride amount for the pilot after collecting 20% platform fees.
@@ -27,17 +27,18 @@ const CarSchema = new Schema({
 //};
 
 
-CarSchema.methods.view_cars = function() {
+/*CarSchema.methods.view_cars = function() {
   const filter = {};
   var all = Car.find(filter);
   return all;
 };
+*/
 
-CarSchema.methods.amountForPilot = function() {
-  return parseInt(this.revenue - 175);
+ReqCarSchema.methods.amountForPilot = function() {
+  return parseInt((this.revenue - 175)*(this.partner_points/this.total_points));
 };
 
 
-const Car = mongoose.model('Car', CarSchema);
+const Req_Car = mongoose.model('Req_Car', ReqCarSchema);
 
-module.exports = Car;
+module.exports = Req_Car;

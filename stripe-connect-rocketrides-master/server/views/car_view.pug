@@ -6,8 +6,8 @@ block content
     .user
       h1 Welcome to the admin dashboard!
       .block.stripe
-        form.payout(action='/cars/edit_details', method='POST', autocomplete='off')
-          input(class='primary' type='submit', value='Edit existing car details')
+        form.payout(action='/cars/add_new_record', method='POST', autocomplete='off')
+          input(class='primary' type='submit', value='Add a new month record')
         form.payout(action='/cars/delete_options', method='POST', autocomplete='off')
           input(class='primary' type='submit', value='Delete a record')
         form.payout(action='/cars/car_dash', method='GET', autocomplete='off')
@@ -43,7 +43,7 @@ block content
               .cell VIN
               .cell Car Model
               .cell Month
-              .cell Total Revenue            
+              .cell Total Revenue          
             each car in cars
               .row
                 .cell.my_subs_id #{car.car_id}
@@ -55,4 +55,4 @@ block content
 
 block footer
   form.right(action='/cars/add_options', method='POST', autocomplete='off')
-     input(type='submit', name="immediate_balance", value='Add a new car record!', class='primary-action')
+     input(type='submit', name="immediate_balance", value='Add a new car', class='primary-action')

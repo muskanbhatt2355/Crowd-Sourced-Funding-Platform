@@ -14,18 +14,14 @@ block content
   h3 You can also refer to the car dashboard for the required details.
   h1.title.short-form Fill in the car details required:
   section.form.login
-    form(action='/cars/add_record' method='POST', autocomplete='off')
+    form(action='/cars/add_car' method='POST', autocomplete='off')
       fieldset
-        .row(label='Subs. ID')
-          input(type='number', name='car_id', placeholder='10', required, autofocus)
-        .row(label='Car Model')
-          input(type='text', name='mod_name', placeholder='Toyota Corolla', required, autofocus)
         .row(label='Car VIN')
           input(type='text', name='vin_id', placeholder='TACF25H7MC079RT21', required, autofocus)
-        .row(label='Month')
-          input(type='text', name='month', placeholder='January', required, autofocus)        
-        .row(label='Total Revenue')
-          input(type='number', name='revenue', placeholder='1000 - (value is in $)', required, autofocus)
+        .row(label='Car Model')
+          input(type='text', name='mod_name', placeholder='Toyota Corolla', required, autofocus)        
+        .row(label='Total Car Points')
+          input(type='number', name='total_points', placeholder='20000', required, autofocus)
       input(class='primary', type='submit', value='Add')
 
               

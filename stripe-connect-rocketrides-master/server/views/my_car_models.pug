@@ -6,14 +6,8 @@ block content
     .user
       h1 Here are all the car models
       .block.stripe
-        form.payout(action='/cars/edit_details', method='POST', autocomplete='off')
-          input(class='primary' type='submit', value='Edit existing car details')
-        form.payout(action='/cars/delete_options', method='POST', autocomplete='off')
-          input(class='primary' type='submit', value='Delete a record')
         form.payout(action='/cars/car_dash', method='GET', autocomplete='off')
-          input(class='primary' type='submit', value='All records')
-        form.payout(action='/cars/disp_car_models', method='GET', autocomplete='off')
-          input(class='primary' type='submit', value='Cars')
+          input(class='primary' type='submit', value='Go back to the dashboard')
         
     section.rides    
       div(style={'width':'1000px','overflow-x':'scroll'})
@@ -26,11 +20,13 @@ block content
           .list
             .row
               .cell VIN
-              .cell Car Model            
+              .cell Car Model   
+              .cell Car Points         
             each car_model in car_models
               .row
                 .cell.my_vin #{car_model.vin_id}
                 .cell.my_name #{car_model.mod_name}
+                .cell.my_points #{car_model.total_points}
               
 
 block footer

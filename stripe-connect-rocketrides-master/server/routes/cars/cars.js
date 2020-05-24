@@ -102,6 +102,38 @@ const Car_model = require('../../models/car_model');
 	   
 	});
 	*/
+	/*Pilot.find({firstName: 'Taruna'}, function(err,pilot){
+		console.log('Here is she');
+		//console.log(pilot);
+		pilot[0].vin_points_pair.push({vin_id:"HEFINSHH154890201",partner_points:"20000"});
+		//pilot[0].vin_points_pair = [];
+		pilot[0].save();
+		pilot[0].vin_points_pair.push({vin_id:"JHDHASUD6126387IK",partner_points:"12000"});
+		pilot[0].save();
+		console.log(pilot[0].vin_points_pair);
+		for( var man in pilot){
+			console.log(pilot[man].vin_points_pair[0].vin_id);
+		}
+	});
+	Pilot.find({firstName: 'Shashwat'}, function(err,man){
+		console.log('Here is he');
+		//console.log(pilot);
+		man[0].vin_points_pair.push({vin_id:"278DGSKLCBN489XNK",partner_points:"20000"});
+		//pilot[0].vin_points_pair = [];
+		man[0].save();
+		man[0].vin_points_pair.push({vin_id:"JHDHASUD6126387IK",partner_points:"8000"});
+		man[0].save();
+		console.log(man[0].vin_points_pair);
+		for( var man in pilot){
+			console.log(pilot[man].vin_points_pair[0].vin_id);
+		}
+	});
+	*/
+
+
+	Car_model.find({}, function(err,cars){
+		console.log(cars);
+	});
 
 
  	Car.find({}, function(err, cars){
@@ -125,8 +157,19 @@ const Car_model = require('../../models/car_model');
 	
  });
 
- router.post('/edit_details', function(req,res){
- 	Car.find({}, function(err, cars){
+ router.post('/add_new_record', function(req,res){
+ 	Car_model.find({}, function(err, cars){
+		if(err){
+			console.log(err);
+		}
+		else{
+			res.render('edit_view',{cars:cars});
+		}
+ 	});
+
+ });
+ router.get('/add_new_record', function(req,res){
+ 	Car_model.find({}, function(err, cars){
 		if(err){
 			console.log(err);
 		}
@@ -175,21 +218,27 @@ const Car_model = require('../../models/car_model');
 
  	const req_month = req.body.req_month;
  	const filter = {'month': req_month};
- 	const my_rides = Car.find({'month':req_month});
+ 	//const my_rides = rides2.find({'month':req_month});
  	console.log('The required Month is Here!');
- 	console.log(req_month);
- 	console.log(my_rides);
+ 	//console.log(req_month);
+ 	//console.log(my_rides);
  	Car.find(filter, function(err,rides) {
+ 		var req_rides = [];
+ 		for ( var i in rides2 ){
+ 			if(rides2[i].month == req.body.req_month){
+ 				req_rides.push(rides2[i]);
+ 			};
+ 		}
  		if(err){
  			console.log(err);
  		}
- 		console.log('rides are here!');
- 		console.log(rides);
- 		const ridesTotalAmount = rides.reduce((a, b) => {
+ 		//console.log('rides are here!');
+ 		//console.log(rides);
+ 		const ridesTotalAmount = req_rides.reduce((a, b) => {
 		    return a + b.amountForPilot();
 		  }, 0);
  		res.render('dashboard',{
- 			rides:rides,
+ 			rides:req_rides,
  			pilot: pilot,
 		    balanceAvailable: balance.available[0].amount,
 		    balancePending: balance.pending[0].amount,
@@ -291,28 +340,53 @@ router.post('/delete_car', function(req,res){
 router.post('/add_options', function(req,res){
  	res.render('add_view');
  });
+router.get('/add_options', function(req,res){
+ 	res.render('add_view');
+ });
+
+router.post('/add_car', function(req,res){
+	const filter = {'vin_id': req.body.vin_id};
+	const update = {'mod_name': req.body.mod_name, 'total_points': req.body.total_points};
+	Car_model.findOneAndUpdate(filter, update ,{upsert: true}, function(err,results){
+		if(err){
+			console.log(err);
+		}
+	});
+	return res.redirect('../../cars/add_options');
+});
 
 router.post('/add_record', function(req,res){
- 	const filter = {'vin_id': req.body.vin_id,'mod_name': req.body.mod_name,'month':req.body.month};
+ 	//const filter = {'vin_id': req.body.vin_id,'mod_name': req.body.mod_name,'month':req.body.month};
  	//const filter = {'car_id': req.body.car_id};
-	const update = {'car_id': req.body.car_id,'revenue': req.body.revenue};
+	//const update = {'car_id': req.body.car_id,'revenue': req.body.revenue};
+	Car_model.find({'vin_id': req.body.vin_id}, function(err,req_model){
+		console.log("here is our model");
+		console.log(req_model);
+		const mod_name = req_model[0].mod_name;
+		const total_points = req_model[0].total_points;
 
-	const car = new Car({
-	    car_id: req.body.car_id,
-	    vin_id: req.body.vin_id,
-	    mod_name: req.body.mod_name,
-	    month: req.body.month,
-	    revenue: req.body.revenue
-     });
-	const filter1 = {'vin_id': req.body.vin_id, 'mod_name':req.body.mod_name};
-	Car_model.findOneAndUpdate(filter1, filter1 ,{upsert: true}, function(err,results){
+		const car = new Car({
+		    car_id: req.body.car_id,
+		    vin_id: req.body.vin_id,
+		    mod_name: mod_name,
+		    month: req.body.month,
+		    revenue: req.body.revenue,
+		    total_points: total_points
+	     });
+		car.save();
+ 	return res.redirect('../../cars/add_new_record');
+
+	});
+	
+	//const filter1 = {'vin_id': req.body.vin_id, 'mod_name':req.body.mod_name};
+	/*Car_model.findOneAndUpdate(filter1, filter1 ,{upsert: true}, function(err,results){
 		if(err){
 			console.log(err);
 		}
 		
-	});
+	});*/
 	
-	Pilot.find({firstName: 'Taruna'}, function(err, pilots){
+	/*Pilot.find({}, function(err, pilots){
 		if(err){
 			console.log(err);
 		}
@@ -348,6 +422,8 @@ router.post('/add_record', function(req,res){
 			});
 		}
  	});
+ 	*/
+ 	
 	
  });
 

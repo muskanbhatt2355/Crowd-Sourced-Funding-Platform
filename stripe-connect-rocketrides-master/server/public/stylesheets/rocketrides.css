@@ -55,7 +55,7 @@ section {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  max-width: 800px;
+  max-width: 1000px;
 }
 
 header {
@@ -865,6 +865,7 @@ form a.button {
 .rides .list .cell {
   flex: 1;
   position: relative;
+  min-width: 100px;
   padding: 15px 20px;
   color: #82909b;
   font-size: 15px;

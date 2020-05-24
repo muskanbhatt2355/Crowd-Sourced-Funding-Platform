@@ -36,13 +36,14 @@ router.get('/dashboard', pilotRequired, async (req, res) => {
   });
   // Fetch the pilot's recent rides
   const rides = await pilot.listRecentRides();
+  console.log('your rides!');
   console.log(rides);
   const ridesTotalAmount = rides.reduce((a, b) => {
     return a + b.amountForPilot();
   }, 0);
   const [showBanner] = req.flash('showBanner');
-  const copilots = await pilot.startit();
-    console.log(copilots);
+  //const copilots = await pilot.startit();
+    //console.log(copilots);
  
   var req_months = [];
   for ( var ride in rides ){

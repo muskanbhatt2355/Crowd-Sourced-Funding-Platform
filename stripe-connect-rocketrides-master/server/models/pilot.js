@@ -5,6 +5,8 @@ const Schema = mongoose.Schema;
 const bcrypt = require('bcryptjs');
 const Ride = require('./ride');
 const Car = require('./car');
+const Car_model = require('./car_model');
+const Req_Car = require('./req_car');
 
 // Use native promises.
 mongoose.Promise = global.Promise;
@@ -33,6 +35,10 @@ const PilotSchema = new Schema({
 
   // Stripe account ID to send payments obtained with Stripe Connect.
   stripeAccountId: String,
+  car_points_pair: [{
+    car_id: Number,
+    partner_points: Number,
+  }],
 });
 
 // Return a pilot name for display.
@@ -67,8 +73,47 @@ PilotSchema.methods.listRecentRides = function() {
 };
 */
 //The above one doesn't work but this below one does. A bit stupid but it does.
-PilotSchema.methods.listRecentRides = function() {
-  return Car.find({});
+PilotSchema.methods.listRecentRides = async function() {
+  var my_subs_cars = [];
+  var resp_my_points = this.car_points_pair;
+  console.log(resp_my_points);
+  for( let car in this.car_points_pair){
+    console.log('car here!');
+    //console.log(car);
+    //console.log(this.car_points_pair);
+    //console.log(this.car_points_pair[car].car_id);
+    await Car.find({'car_id': this.car_points_pair[car].car_id },async function (err, req_car){
+      if(err){
+        console.log(err);
+      }
+      console.log(car);
+      console.log('Yes! I am executed');
+      //console.log(resp_my_points);
+      //console.log(resp_my_points[car].car_id);
+      //console.log(resp_my_points[car].partner_points);
+      //req_car[0].partner_points = await resp_my_points[car].partner_points;
+      //Object.assign(req_car[0], {'partner_points': resp_my_points[car].partner_points});
+      //console.log(req_car[0]);
+      //await my_subs_cars.push(req_car[0]);
+      //resp_my_points.push(this.car_points_pair[car].partner_points);
+      var req_car2 = new Req_Car({
+        car_id: req_car[0].car_id,
+        vin_id: req_car[0].vin_id,
+        mod_name: req_car[0].mod_name,
+        month: req_car[0].month,
+        revenue: req_car[0].revenue,
+        total_points: req_car[0].total_points,
+        partner_points: await resp_my_points[car].partner_points,
+
+      });
+      req_car2.save();
+      console.log(req_car2);
+      my_subs_cars.push(req_car2);
+    });
+  }
+  //console.log('Your rides begin here!');
+  console.log(my_subs_cars);
+  return my_subs_cars;
 };
 
 // Generate a password hash (with an auto-generated salt for simplicity here).

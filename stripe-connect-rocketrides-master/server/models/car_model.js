@@ -10,6 +10,7 @@ mongoose.Promise = global.Promise;
 const CarModelSchema = new Schema({
   vin_id: { type: String, unique: true },
   mod_name: { type: String, default: 'Toyota Corolla' },
+  total_points: { type: Number, default: '20000'},
 });
 
 // Return the ride amount for the pilot after collecting 20% platform fees.

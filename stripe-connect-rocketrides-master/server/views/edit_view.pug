@@ -4,7 +4,7 @@ block header
 block content
   .dashboard
     .user
-      h1 You can easily edit the existing car details or add new cars!
+      h1 Add a new month record for the existing cars!
       
       .block.stripe
         .block.stripe
@@ -14,14 +14,17 @@ block content
   h3 You can also refer to the car dashboard for the required details.
   h1.title.short-form Fill in the car details required:
   section.form.login
-    form(action='/cars/car_update' method='POST', autocomplete='off')
+    form(action='/cars/add_record' method='POST', autocomplete='off')
       fieldset
-        .row(label = 'Choose Car ID:')
-          select(id = 'car_list', name='car_id')
+        .row(label='Subs.ID')
+          input(type='number', name='car_id', placeholder='50', required, autofocus)
+        .row(label = 'Choose Car VIN:')
+          select(id = 'vin_id', name='vin_id')
             option(value='') Select:
             each car in cars
-              option(name= car.car_id ,value = car.car_id) #{car.car_id}
-
+              option(name= car.vin_id ,value = car.vin_id) #{car.vin_id}
+        .row(label='Month')
+          input(type='text', name='month', placeholder='January', required, autofocus)
         .row(label='Total Revenue')
           input(type='number', name='revenue', placeholder='1000 - (value is in $)', required, autofocus)
       input(class='primary', type='submit', value='Update')

@@ -55,6 +55,8 @@ block content
               .cell Car ID
               .cell Car Model
               .cell Subscription Month
+              .cell Your Points
+              .cell Total Points
               .cell Total Mothly Revenue
               .cell Your Amount
             each ride in rides
@@ -63,6 +65,8 @@ block content
                 .cell.my_vin #{ride.vin_id}
                 .cell.my_name #{ride.mod_name}
                 .cell.my_month #{ride.month}
+                .cell.my_points #{ride.partner_points}
+                .cell.all_points #{ride.total_points}
                 .cell.my_revenue $#{ride.revenue}
                 .cell.price $#{(ride.amountForPilot()).toFixed(2)}
               
