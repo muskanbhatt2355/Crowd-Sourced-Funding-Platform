@@ -1,0 +1,69 @@
+extends admin_layout
+
+block header
+  
+block content
+
+  .dashboard
+    form.payout(action='/cars/delete_car_model', method='POST', autocomplete='off')
+          input(class='primary' type='submit', value='Delete a Car')
+    .user
+      h1 Welcome to the admin dashboard!
+      .block.stripe
+        form.payout(action='/cars/add_new_record', method='POST', autocomplete='off')
+          input(class='primary' type='submit', value='Add a new month record')
+        form.payout(action='/cars/delete_options', method='POST', autocomplete='off')
+          input(class='primary' type='submit', value='Delete a record')
+        form.payout(action='/cars/car_dash', method='GET', autocomplete='off')
+          input(class='primary' type='submit', value='All records')
+        form.payout(action='/cars/disp_car_models', method='GET', autocomplete='off')
+          input(class='primary' type='submit', value='Cars')
+        
+        
+    section.rides
+
+      h2 All Records
+      form(action='/cars/ad_month_filter' method='POST', autocomplete='off')
+        fieldset
+          h3 Apply Filter:
+          .row(label = 'Select Year:')
+            select(id = 'req_year', name='req_year')
+              option(value='') Select:
+              each req_year in req_years
+                option(name= req_year ,value = req_year) #{req_year}
+          h3 Apply Filter:
+          .row(label = 'Select Month:')
+            select(id = 'req_month', name='req_month')
+              option(value='') Select:
+              each req_month in req_months
+                option(name= req_month ,value = req_month) #{req_month}
+            input(class='primary', type='submit', value='Apply')
+    
+      div(style={'width':'1000px','overflow-x':'scroll'})
+        if cars.length == 0
+          .no-rides
+            .rocket
+            h1 No cars to display yet!
+            h2 Add some cars!
+        else
+          .list
+            .row
+              .cell Subs.ID
+              .cell VIN
+              .cell Car Model
+              .cell Year
+              .cell Month
+              .cell Total Revenue          
+            each car in cars
+              .row
+                .cell.my_subs_id #{car.car_id}
+                .cell.my_vin #{car.vin_id}
+                .cell.my_name #{car.mod_name}
+                .cell.my_year #{car.year}
+                .cell.my_month #{car.month}
+                .cell.my_revenue $#{car.revenue}
+              
+
+block footer
+  form.right(action='/cars/add_options', method='POST', autocomplete='off')
+     input(type='submit', name="immediate_balance", value='Add a new car', class='primary-action')

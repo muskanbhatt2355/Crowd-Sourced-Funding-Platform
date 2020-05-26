@@ -11,6 +11,7 @@ const ReqCarSchema = new Schema({
   car_id:Number,
   vin_id: String,
   mod_name: String,
+  year: Number,
   month: String,
   revenue: Number,
   total_points: Number,

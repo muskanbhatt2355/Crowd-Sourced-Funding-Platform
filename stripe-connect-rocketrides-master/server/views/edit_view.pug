@@ -9,7 +9,7 @@ block content
       .block.stripe
         .block.stripe
         form.payout(action='/cars/car_dash', method='GET', autocomplete='off')
-          input(class='primary' type='submit', value='Go back to the dashboard')
+          input(class='primary' type='submit', value='Go back')
 
   h3 You can also refer to the car dashboard for the required details.
   h1.title.short-form Fill in the car details required:
@@ -23,8 +23,16 @@ block content
             option(value='') Select:
             each car in cars
               option(name= car.vin_id ,value = car.vin_id) #{car.vin_id}
-        .row(label='Month')
-          input(type='text', name='month', placeholder='January', required, autofocus)
+        .row(label = 'Year')
+          select(id = 'year', name='year')
+            option(value='') Select:
+            each year in years
+              option(name= year ,value = year) #{year}
+        .row(label = 'Month')
+          select(id = 'month', name='month')
+            option(value='') Select:
+            each month in months
+              option(name= month ,value = month) #{month}
         .row(label='Total Revenue')
           input(type='number', name='revenue', placeholder='1000 - (value is in $)', required, autofocus)
       input(class='primary', type='submit', value='Update')

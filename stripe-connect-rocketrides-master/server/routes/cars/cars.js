@@ -1,4 +1,4 @@
-'use strict';
++'use strict';
 
 const config = require('../../config');
 const stripe = require('stripe')(config.stripe.secretKey);
@@ -32,7 +32,7 @@ const Car_model = require('../../models/car_model');
  
  router.get('/car_dash', function(req, res) {
 //create an array of documents
-	var listDocuments= [
+	/*var listDocuments= [
 	    {
 	        car_id: 1,
 	        mod_name: "Ford Mustang",
@@ -63,7 +63,7 @@ const Car_model = require('../../models/car_model');
 	        month: "March",
 	        revenue: 900
 	    },
-	];
+	];*/
 
 	//Car.create(listDocuments, function (err, results) {
 
@@ -82,7 +82,7 @@ const Car_model = require('../../models/car_model');
 	 
 	});
 	*/
-	var listDocuments2 =[
+	/*var listDocuments2 =[
 		{
 			vin_id: 'GDTWEIO123YSHM905',
 			mod_name: 'Toyota 100'
@@ -91,7 +91,7 @@ const Car_model = require('../../models/car_model');
 			vin_id: 'AVFSHIO123YSHM905',
 			mod_name: 'Hundai 280'
 		},
-	];
+	];*/
 	/*Car_model.create(listDocuments2, function (err, results) {
 		if(err){
 			console.log(err);
@@ -148,10 +148,17 @@ const Car_model = require('../../models/car_model');
 			    req_months.push(month);
 			  }
 			}
+			var req_years = [];
+			for ( var car in cars ){
+			  const year = cars[car].year;
+			  if(!req_years.includes(year)){
+			    req_years.push(year);
+			  }
+			}
 			console.log('cars start here!');
 			console.log(cars);
 			console.log('cars end here!');
-			res.render('car_view',{cars:cars,req_months:req_months});
+			res.render('car_view',{cars:cars,req_months:req_months,req_years:req_years});
 		}
  	});
 	
@@ -163,7 +170,20 @@ const Car_model = require('../../models/car_model');
 			console.log(err);
 		}
 		else{
-			res.render('edit_view',{cars:cars});
+			var years = [];
+			const present_year = parseInt(new Date().getFullYear());
+			for(var i=0; i<4;i++){
+				years.push(present_year-i);
+			}
+
+			var months = [];
+			var month_list = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+			const present_month = parseInt(new Date().getMonth());
+			for(var i=present_month;i>=0;i--){
+				months.push(month_list[i]);
+			}
+
+			res.render('edit_view',{cars:cars,years:years,months:months});
 		}
  	});
 
@@ -174,12 +194,24 @@ const Car_model = require('../../models/car_model');
 			console.log(err);
 		}
 		else{
-			res.render('edit_view',{cars:cars});
+			var years = [];
+			const present_year = parseInt(new Date().getFullYear());
+			for(var i=0; i<4;i++){
+				years.push(present_year-i);
+			}
+
+			var months = [];
+			var month_list = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+			const present_month = parseInt(new Date().getMonth());
+			for(var i=present_month;i>=0;i--){
+				months.push(month_list[i]);
+			}
+
+			res.render('edit_view',{cars:cars,years:years,months:months});
 		}
  	});
 
  });
-
  router.post('/car_update', function(req,res){
  	//const filter = {'car_id': req.body.car_id,'mod_name': req.body.mod_name,'month':req.body.month};
  	const filter = {'car_id': req.body.car_id};
@@ -212,12 +244,20 @@ const Car_model = require('../../models/car_model');
 	      req_months.push(month);
 	    }
 	  }
+
+	  var req_years = [];
+	  for ( var ride in rides2 ){
+	    const year = rides2[ride].year;
+	    if(!req_years.includes(year)){
+	      req_years.push(year);
+	    }
+	  }
 	  console.log(req_months);
 
 
 
  	const req_month = req.body.req_month;
- 	const filter = {'month': req_month};
+ 	const filter = {'month': req_month,'year':req.body.req_year};
  	//const my_rides = rides2.find({'month':req_month});
  	console.log('The required Month is Here!');
  	//console.log(req_month);
@@ -225,7 +265,7 @@ const Car_model = require('../../models/car_model');
  	Car.find(filter, function(err,rides) {
  		var req_rides = [];
  		for ( var i in rides2 ){
- 			if(rides2[i].month == req.body.req_month){
+ 			if((rides2[i].month == req.body.req_month)&&(rides2[i].year == req.body.req_year)){
  				req_rides.push(rides2[i]);
  			};
  		}
@@ -244,6 +284,7 @@ const Car_model = require('../../models/car_model');
 		    balancePending: balance.pending[0].amount,
 		    ridesTotalAmount: ridesTotalAmount,
 		    req_months: req_months,
+		    req_years: req_years,
 		    showBanner: !!showBanner || req.query.showBanner,
 
  		});
@@ -257,11 +298,14 @@ const Car_model = require('../../models/car_model');
 			console.log(err);
 		}
 		else{
-			Car.find({'month':req.body.req_month}, function(err, cars){
+			Car.find({'month':req.body.req_month,'year':req.body.req_year}, function(err, cars){
 				if(err){
 					console.log(err);
 				}
 				else{
+					console.log('Riya');
+					console.log(cars);
+					console.log('riya ends here!');
 					var req_months = [];
 					for ( var ride in rides ){
 					  const month = rides[ride].month;
@@ -269,7 +313,14 @@ const Car_model = require('../../models/car_model');
 					    req_months.push(month);
 					  }
 					}
-					res.render('car_view',{cars:cars,req_months:req_months});
+					var req_years = [];
+					for ( var ride in rides ){
+					  const year = rides[ride].year;
+					  if(!req_years.includes(year)){
+					    req_years.push(year);
+					  }
+					}
+					res.render('car_view',{cars:cars,req_months:req_months,req_years:req_years});
 				}
 		 	});
 			
@@ -369,14 +420,15 @@ router.post('/add_record', function(req,res){
 		    car_id: req.body.car_id,
 		    vin_id: req.body.vin_id,
 		    mod_name: mod_name,
+		    year: req.body.year,
 		    month: req.body.month,
 		    revenue: req.body.revenue,
 		    total_points: total_points
 	     });
 		car.save();
- 	return res.redirect('../../cars/add_new_record');
+ 	//return res.redirect('../../cars/add_new_record');
 
-	});
+	//});
 	
 	//const filter1 = {'vin_id': req.body.vin_id, 'mod_name':req.body.mod_name};
 	/*Car_model.findOneAndUpdate(filter1, filter1 ,{upsert: true}, function(err,results){
@@ -386,51 +438,47 @@ router.post('/add_record', function(req,res){
 		
 	});*/
 	
-	/*Pilot.find({}, function(err, pilots){
-		if(err){
-			console.log(err);
-		}
-		else{
-			console.log(pilots);
-			Car.findOneAndUpdate(filter, update, {upsert: true}, async function(err, doc) {
-	    		if (err) return res.send(err);
-	    // As a new car is created we also need to add charges of amount = amountforpilot() to each pilots stripe id
+		Pilot.find({}, async function(err, pilots){
+			if(err){
+				console.log(err);
+			}
+			else{
+				console.log(pilots);
+				//Car.findOneAndUpdate(filter, update, {upsert: true}, async function(err, doc) {
+		    		//if (err) return res.send(err);
+		    // As a new car is created we also need to add charges of amount = amountforpilot() to each pilots stripe id
 
-			    for (const pilot of pilots) {
-			    	var source = 'tok_bypassPending';
+				    for (const pilot of pilots) {
+				    	var source = 'tok_bypassPending';
 
-			    	const charge = await stripe.charges.create({
-				      source: source,
-				      amount: car.amountForPilot(),
-				      currency: 'usd',
-				      description: config.appName,
-				      statement_descriptor: config.appName,
-				      // The destination parameter directs the transfer of funds from platform to pilot
-				      transfer_data: {
-				        // Send the amount for the pilot after collecting a 20% platform fee:
-				        // the `amountForPilot` method simply computes `ride.amount * 0.8`
-				        amount: car.amountForPilot(),
-				        // The destination of this charge is the pilot's Stripe account
-				        destination: pilot.stripeAccountId,
-				      },
-				    });
-				    car.stripeChargeId = charge.id;
-    				car.save();
-			    }
+				    	const charge = await stripe.charges.create({
+					      source: source,
+					      amount: car.amountForPilot(),
+					      currency: 'usd',
+					      description: config.appName,
+					      statement_descriptor: config.appName,
+					      // The destination parameter directs the transfer of funds from platform to pilot
+					      transfer_data: {
+					        // Send the amount for the pilot after collecting a 20% platform fee:
+					        // the `amountForPilot` method simply computes `ride.amount * 0.8`
+					        amount: car.amountForPilot(),
+					        // The destination of this charge is the pilot's Stripe account
+					        destination: pilot.stripeAccountId,
+					      },
+					    });
+					    //car.stripeChargeId = charge.id;
+	    				//car.save();
+				    }
 
-	    		return res.redirect('../../cars/car_dash');
-			});
-		}
+		    		//return res.redirect('../../cars/car_dash');
+		    		return res.redirect('../../cars/add_new_record');
+				//});
+			}
+	 	});
  	});
- 	*/
  	
 	
- });
-
-
- 
-
-
+});
 
 
 module.exports = router;

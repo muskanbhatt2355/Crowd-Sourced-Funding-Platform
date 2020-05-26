@@ -100,6 +100,7 @@ PilotSchema.methods.listRecentRides = async function() {
         car_id: req_car[0].car_id,
         vin_id: req_car[0].vin_id,
         mod_name: req_car[0].mod_name,
+        year: req_car[0].year,
         month: req_car[0].month,
         revenue: req_car[0].revenue,
         total_points: req_car[0].total_points,

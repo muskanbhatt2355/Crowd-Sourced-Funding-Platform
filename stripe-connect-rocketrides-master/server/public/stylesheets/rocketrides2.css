@@ -9,6 +9,7 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: none;
   box-sizing: border-box;
+  overflow-x:auto;
 }
 
 ::-webkit-input-placeholder {
@@ -27,7 +28,7 @@
 }
 
 /* General */
-body {
+#inside {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -37,6 +38,37 @@ body {
   background-color: #f6f9fc;
   font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto,
     'Helvetica Neue', Arial, sans-serif;
+}
+
+#ryt {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+#ryt > div {
+  flex:1 1 auto;
+  text-align:center;
+  margin:15px;
+  margin-top: 0px;
+}
+
+#filter {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin:0px;
+}
+
+fieldset .div{
+  display: inline-block;
+  justify-content: center;
+  width: 130px;
+  padding-right: 20px;
+  color: #8798ab;
+  font-weight: 500;
+  text-align: right;
 }
 
 header,
@@ -89,7 +121,7 @@ a.arrow {
 }
 
 #content {
-  max-width: 800px;
+  max-width: 1000px;
   width: 100%;
   flex: 1;
   margin-bottom: 150px;
@@ -97,6 +129,7 @@ a.arrow {
 
 #content.dashboard {
   margin-bottom: 250px;
+  background-color:green;
 }
 
 /* Header, top bar, navigation */
@@ -730,7 +763,7 @@ form a.button {
   height: 43px;
   margin: 30px 0 0 0;
   margin: 2px 0 14px;
-  min-width: 200px;
+  min-width: 150px;
   text-align: center;
 }
 
@@ -1001,16 +1034,16 @@ form a.button {
   }
 
   fieldset .row::before {
-    width: 300px ;
+    width: 110px;
   }
 
   .form.login, fieldset .row::before,
   .form.account fieldset .row::before {
-    width: 100%;
+    width: 80px;
   }
 
   .form.profile fieldset .row::before {
-    width: 300px;
+    width: 100px;
   }
 
   .form {
@@ -1208,3 +1241,4 @@ form a.button {
     opacity: 1;
   }
 }
+

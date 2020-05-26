@@ -1,73 +1,122 @@
-extends layout
-
-block header
-  if showBanner
-    .banner
-      .message
-        strong Congratulations, your account is set up. 
-        span.secondary-text Start investing!.
-block content
-  .dashboard
-    .user
-      .block.profile
-        .photo
-        p Investor since #{moment(pilot.created).format('MMM YYYY')}
-        h1 #{pilot.displayName()}
-        h2
-          a(href='/pilots/stripe/dashboard?account=true') View Stripe account
-
-      .block.week
-        p Your Earnings
-        h1 $#{(ridesTotalAmount).toFixed(2)}
-        h2 #{rides.length} rides
-      .block.available
-        p Your total balance
-        h1 $#{((balanceAvailable + balancePending)).toFixed(2)}
-        h2 $#{(balanceAvailable).toFixed(2)} available
-      .block.stripe
-        form.payout(action='/pilots/stripe/payout', method='POST', autocomplete='off')
-          input(class='primary' type='submit', value='Redeem monthly points' disabled=(balanceAvailable===0))
-        
-          a(href='/pilots/stripe/dashboard') View payouts on Stripe
-   
-    form(action='/cars/apply_filter' method='POST', autocomplete='off')
-      h4 Apply Filter:
-      fieldset
-        .row(label = 'Select Month:')
-          select(id = 'req_month', name='req_month')
-            option(value='') Select:
-            each req_month in req_months
-              option(name= req_month ,value = req_month) #{req_month}
-          input(class='primary', type='submit', value='Apply')
-    section.rides
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no')
+    meta(name='twitter:card', content='summary')
+    meta(name='twitter:site', content='@stripe')
+    meta(name='twitter:title', content='Docuwind')
+    meta(name='twitter:description', content='Rocket Rides is an on-demand platform built on top of Stripe Connect.')
+    meta(name='twitter:image', content='https://rocketrides.io/images/rocketrides.png')
+    title Docuwind
+    link(rel='stylesheet', type='text/css', href='/stylesheets/rocketrides2.css')
+    link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Barlow:500,600')
+    link(rel='icon', type='image/png', sizes='64x64', href='/images/D2.jpg')
       
-      h3 Your Subscriptions
-      div(style={'width':'1200px'})
-        if rides.length == 0
-          .no-rides
-            .rocket
-            h1 No subscriptions to display yet!
-            h2 Subscribe some points!
+
+  body
+    header
+      #top
+        a.docu(href='/') DOCUWIND
+        if pilot
+          .logo
+            a.rocketrides.mark(href='/')
+          .links
+            if pilot.stripeAccountId
+              a(href='/pilots/dashboard') Dashboard
+            a(href='/pilots/logout') Log out
         else
-          .list
-            .row
-              .cell Subs.ID
-              .cell Car ID
-              .cell Car Model
-              .cell Subscription Month
-              .cell Your Points
-              .cell Total Points
-              .cell Total Mothly Revenue
-              .cell Your Amount
-            each ride in rides
-              .row
-                .cell.my_id #{ride.car_id}
-                .cell.my_vin #{ride.vin_id}
-                .cell.my_name #{ride.mod_name}
-                .cell.my_month #{ride.month}
-                .cell.my_points #{ride.partner_points}
-                .cell.all_points #{ride.total_points}
-                .cell.my_revenue $#{ride.revenue}
-                .cell.price $#{(ride.amountForPilot()).toFixed(2)}
+          .logo
+            a.rocketrides(href='/')
+          .links
+            a(href='/pilots/login') Log in
+            a(href='/admins/adlogin') Admin Login 
+      block header
+        if showBanner
+          .banner
+            .message
+              strong Congratulations, your account is set up. 
+              span.secondary-text Start investing!.
+    #inside
+      #content
+        block content
+          .dashboard
+            .user
+              .block.profile
+                .photo
+                p Investor since #{moment(pilot.created).format('MMM YYYY')}
+                h1 #{pilot.displayName()}
+                h2
+                  a(href='/pilots/stripe/dashboard?account=true') View Stripe account
+
+              .block.week
+                p Your Earnings
+                h1 $#{(ridesTotalAmount).toFixed(2)}
+                h2 #{rides.length} rides
+              .block.available
+                p Your total balance
+                h1 $#{((balanceAvailable + balancePending)).toFixed(2)}
+                h2 $#{(balanceAvailable).toFixed(2)} available
+              .block.stripe
+                form.payout(action='/pilots/stripe/payout', method='POST', autocomplete='off')
+                  input(class='primary' type='submit', value='Redeem monthly points' disabled=(balanceAvailable===0))
+                
+                  a(href='/pilots/stripe/dashboard') View payouts on Stripe
+            #filter(style={'max-width':'400px','display':'inline-block'})
+              form(action='/cars/apply_filter' method='POST', autocomplete='off')
+                h3(style={'font-family': 'Arial','letter-spacing': '1px','color':'#8798ab'}) Apply filter:
+                fieldset
+                  .div(label = 'Select Year:')
+                    select(id = 'req_year', name='req_year')
+                      option(value='') Year:
+                      each req_year in req_years
+                        option(name= req_year ,value = req_year) #{req_year}
+                  .div(label = 'Select Month:')
+                    select(id = 'req_month', name='req_month')
+                      option(value='') Month:
+                      each req_month in req_months
+                        option(name= req_month ,value = req_month) #{req_month}
+                  .div
+                    input(class='primary', type='submit', value='Apply')
+            section.rides
               
+              h3(style={'font-family': 'Arial','letter-spacing': '2px','color':'#8798ab'}) Your subscriptions:
+              div(style={'width':'1800px','overflow-x':'scroll'})
+                if rides.length == 0
+                  .no-rides
+                    .rocket
+                    h1 No subscriptions to display yet!
+                    h2 Subscribe some points!
+                else
+                  .list
+                    .row
+                      .cell Subs.ID
+                      .cell Car ID
+                      .cell Car Model
+                      .cell Subscription Year
+                      .cell Subscription Month
+                      .cell Your Points
+                      .cell Total Points
+                      .cell Total Mothly Revenue
+                      .cell Your Amount
+                    each ride in rides
+                      .row
+                        .cell.my_id #{ride.car_id}
+                        .cell.my_vin #{ride.vin_id}
+                        .cell.my_name #{ride.mod_name}
+                        .cell.my_year #{ride.year}
+                        .cell.my_month #{ride.month}
+                        .cell.my_points #{ride.partner_points}
+                        .cell.all_points #{ride.total_points}
+                        .cell.my_revenue $#{ride.revenue}
+                        .cell.price $#{(ride.amountForPilot()).toFixed(2)}
+                      
+
+
+
+    footer
+      block footer
+
+    script(src='/javascripts/rocketrides.js')
+
 

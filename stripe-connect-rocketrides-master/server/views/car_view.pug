@@ -1,58 +1,115 @@
-extends admin_layout
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no')
+    meta(name='twitter:card', content='summary')
+    meta(name='twitter:site', content='@stripe')
+    meta(name='twitter:title', content='Docuwind')
+    meta(name='twitter:description', content='Rocket Rides is an on-demand platform built on top of Stripe Connect.')
+    meta(name='twitter:image', content='https://rocketrides.io/images/rocketrides.png')
+    title Docuwind
+    link(rel='stylesheet', type='text/css', href='/stylesheets/rocketrides2.css')
+    link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Barlow:500,600')
+    link(rel='icon', type='image/png', sizes='64x64', href='/images/D2.jpg')
 
-block header
-block content
-  .dashboard
-    .user
-      h1 Welcome to the admin dashboard!
-      .block.stripe
-        form.payout(action='/cars/add_new_record', method='POST', autocomplete='off')
-          input(class='primary' type='submit', value='Add a new month record')
-        form.payout(action='/cars/delete_options', method='POST', autocomplete='off')
-          input(class='primary' type='submit', value='Delete a record')
-        form.payout(action='/cars/car_dash', method='GET', autocomplete='off')
-          input(class='primary' type='submit', value='All records')
-        form.payout(action='/cars/disp_car_models', method='GET', autocomplete='off')
-          input(class='primary' type='submit', value='Cars')
+  body  
+
+    header
+        #top
+          a.docu(href='/') DOCUWIND
+          if pilot
+            .logo
+              a.rocketrides.mark(href='/')
+            .links
+              if pilot.stripeAccountId
+                a(href='/pilots/dashboard') Dashboard
+              a(href='/pilots/logout') Log out
+          else
+            .logo
+              a.rocketrides(href='/')
+            .links
+              a(href='/pilots/login') Log in
+              a(href='/admins/adlogout') Admin Logout   
+    #ryt  
+      .div
         form.payout(action='/cars/delete_car_model', method='POST', autocomplete='off')
-          input(class='primary' type='submit', value='Delete a Car')
-        
-    section.rides
+                  input(class='primary' type='submit', value='Delete a Car')
+      .div
+        form.payout(action='/cars/add_new_record', method='POST', autocomplete='off')
+                  input(class='primary' type='submit', value='Add a new month record')
+      .div
+        form.payout(action='/cars/delete_options', method='POST', autocomplete='off')
+                  input(class='primary' type='submit', value='Delete a record')
+      .div
+        form.payout(action='/cars/car_dash', method='GET', autocomplete='off')
+                  input(class='primary' type='submit', value='All records')
+      .div
+        form.payout(action='/cars/disp_car_models', method='GET', autocomplete='off')
+                  input(class='primary' type='submit', value='Cars')   
 
-      h2 All Records
-      form(action='/cars/ad_month_filter' method='POST', autocomplete='off')
-        fieldset
-          h3 Apply Filter:
-          .row(label = 'Select Month:')
-            select(id = 'req_month', name='req_month')
-              option(value='') Select:
-              each req_month in req_months
-                option(name= req_month ,value = req_month) #{req_month}
-            input(class='primary', type='submit', value='Apply')
-    
-      div(style={'width':'1000px','overflow-x':'scroll'})
-        if cars.length == 0
-          .no-rides
-            .rocket
-            h1 No cars to display yet!
-            h2 Add some cars!
-        else
-          .list
-            .row
-              .cell Subs.ID
-              .cell VIN
-              .cell Car Model
-              .cell Month
-              .cell Total Revenue          
-            each car in cars
-              .row
-                .cell.my_subs_id #{car.car_id}
-                .cell.my_vin #{car.vin_id}
-                .cell.my_name #{car.mod_name}
-                .cell.my_month #{car.month}
-                .cell.my_revenue $#{car.revenue}
+    #inside
+      #content
+        block content
+
+                
+          .dashboard
+            .user
+              h1 Welcome to the admin dashboard!
+              .block.stripe
+            h2(style={'font-family': 'Arial','letter-spacing': '2px','color':'#8798ab'}) Apply Filter: 
+            #filter(style={'max-width':'400px'})
+              form(action='/cars/ad_month_filter' method='POST', autocomplete='off')
+                fieldset
+              
+                  .div(label = 'Select Year:')
+                    select(id = 'req_year', name='req_year')
+                      option(value='') Year:
+                      each req_year in req_years
+                        option(name= req_year ,value = req_year) #{req_year}
+                  
+                  .div(label = 'Select Month:')
+                    select(id = 'req_month', name='req_month')
+                      option(value='') Month:
+                      each req_month in req_months
+                        option(name= req_month ,value = req_month) #{req_month}
+                  .div
+                    input(class='primary', type='submit', value='Apply')       
+                
+            section.rides
+            
+              div(style={'width':'1500px','overflow-x':'scroll'})
+                if cars.length == 0
+                  .no-rides
+                    .rocket
+                    h1 No cars to display yet!
+                    h2 Add some cars!
+                else
+                  .list
+                    .row
+                      .cell Subs.ID
+                      .cell VIN
+                      .cell Car Model
+                      .cell Year
+                      .cell Month
+                      .cell Total Revenue          
+                    each car in cars
+                      .row
+                        .cell.my_subs_id #{car.car_id}
+                        .cell.my_vin #{car.vin_id}
+                        .cell.my_name #{car.mod_name}
+                        .cell.my_year #{car.year}
+                        .cell.my_month #{car.month}
+                        .cell.my_revenue $#{car.revenue}
+
+    footer
+      block footer
+        form.right(action='/cars/add_options', method='POST', autocomplete='off')
+           input(type='submit', name="immediate_balance", value='Add a new car', class='primary-action')
+
+    script(src='/javascripts/rocketrides.js')
+
+  
+
               
 
-block footer
-  form.right(action='/cars/add_options', method='POST', autocomplete='off')
-     input(type='submit', name="immediate_balance", value='Add a new car', class='primary-action')

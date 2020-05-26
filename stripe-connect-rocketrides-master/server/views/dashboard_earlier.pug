@@ -1,0 +1,80 @@
+extends layout
+
+block header
+  if showBanner
+    .banner
+      .message
+        strong Congratulations, your account is set up. 
+        span.secondary-text Start investing!.
+block content
+  .dashboard
+    .user
+      .block.profile
+        .photo
+        p Investor since #{moment(pilot.created).format('MMM YYYY')}
+        h1 #{pilot.displayName()}
+        h2
+          a(href='/pilots/stripe/dashboard?account=true') View Stripe account
+
+      .block.week
+        p Your Earnings
+        h1 $#{(ridesTotalAmount).toFixed(2)}
+        h2 #{rides.length} rides
+      .block.available
+        p Your total balance
+        h1 $#{((balanceAvailable + balancePending)).toFixed(2)}
+        h2 $#{(balanceAvailable).toFixed(2)} available
+      .block.stripe
+        form.payout(action='/pilots/stripe/payout', method='POST', autocomplete='off')
+          input(class='primary' type='submit', value='Redeem monthly points' disabled=(balanceAvailable===0))
+        
+          a(href='/pilots/stripe/dashboard') View payouts on Stripe
+   
+    form(action='/cars/apply_filter' method='POST', autocomplete='off')
+      h4 Apply Filter:
+      fieldset
+        .row(label = 'Select Year:')
+          select(id = 'req_year', name='req_year')
+            option(value='') Select:
+            each req_year in req_years
+              option(name= req_year ,value = req_year) #{req_year}
+        .row(label = 'Select Month:')
+          select(id = 'req_month', name='req_month')
+            option(value='') Select:
+            each req_month in req_months
+              option(name= req_month ,value = req_month) #{req_month}
+          input(class='primary', type='submit', value='Apply')
+    section.rides
+      
+      h3 Your Subscriptions
+      div(style={'width':'1200px'})
+        if rides.length == 0
+          .no-rides
+            .rocket
+            h1 No subscriptions to display yet!
+            h2 Subscribe some points!
+        else
+          .list
+            .row
+              .cell Subs.ID
+              .cell Car ID
+              .cell Car Model
+              .cell Subscription Year
+              .cell Subscription Month
+              .cell Your Points
+              .cell Total Points
+              .cell Total Mothly Revenue
+              .cell Your Amount
+            each ride in rides
+              .row
+                .cell.my_id #{ride.car_id}
+                .cell.my_vin #{ride.vin_id}
+                .cell.my_name #{ride.mod_name}
+                .cell.my_year #{ride.year}
+                .cell.my_month #{ride.month}
+                .cell.my_points #{ride.partner_points}
+                .cell.all_points #{ride.total_points}
+                .cell.my_revenue $#{ride.revenue}
+                .cell.price $#{(ride.amountForPilot()).toFixed(2)}
+              
+

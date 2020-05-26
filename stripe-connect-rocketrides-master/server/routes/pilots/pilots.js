@@ -52,6 +52,13 @@ router.get('/dashboard', pilotRequired, async (req, res) => {
       req_months.push(month);
     }
   }
+  var req_years = [];
+  for ( var ride in rides ){
+    const year = rides[ride].year;
+    if(!req_years.includes(year)){
+      req_years.push(year);
+    }
+  }
   console.log(req_months);
 
   // There is one balance for each currencies used: as this 
@@ -63,6 +70,7 @@ router.get('/dashboard', pilotRequired, async (req, res) => {
     ridesTotalAmount: ridesTotalAmount,
     rides: rides,
     req_months: req_months,
+    req_years: req_years,
     showBanner: !!showBanner || req.query.showBanner,
   });
 });
