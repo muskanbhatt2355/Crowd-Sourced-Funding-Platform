@@ -1,4 +1,4 @@
-+'use strict';
+'use strict';
 
 const config = require('../../config');
 const stripe = require('stripe')(config.stripe.secretKey);
@@ -11,6 +11,8 @@ const Ride = require('../../models/ride');
 const Passenger = require('../../models/passenger');
 const Car = require('../../models/car');
 const Car_model = require('../../models/car_model');
+
+
 
 /*router.get('/car_dash', function(req, res) {
         Car.find({}, function(err, cars) {
@@ -478,6 +480,57 @@ router.post('/add_record', function(req,res){
  	});
  	
 	
+});
+
+// Buying Points from now on
+
+router.post('/buy_view', function(req,res){
+	Car_model.find({},function(err,cars){
+		res.render('buy_view',{cars:cars});
+	});
+ 	
+ });
+
+router.post('/payment_success', function(req,res){
+	res.render('payment_success');
+ });
+router.get('/payment_success', function(req,res){
+	res.render('payment_success');
+ });
+router.post('/payment_failure', function(req,res){
+	res.render('payment_failure');
+ });
+router.get('/payment_failure', function(req,res){
+	res.render('payment_failure');
+ });
+
+router.post('/buy_points', async function(req,res){
+	const stripe = require('stripe')('sk_test_rZ5sztZvwHNJHN1IlyNyn3uM00PlJIr9I7');
+
+	const session = await stripe.checkout.sessions.create({
+	  payment_method_types: ['card'],
+	  line_items: [{
+	    price: 'price_HM5BUob6PEQPwM',
+	    quantity: req.body.card_num,
+	  }],
+	  mode: 'payment',
+	  success_url: 'http://localhost:3000/cars/payment_success?session_id={CHECKOUT_SESSION_ID}',
+	  cancel_url: 'http://localhost:3000/cars/payment_failure',
+	});
+	console.log(session);
+	res.render('react_checkout',{session:session});
+	/*const stripe2 = require('stripe');
+	var stripe3 = window.Stripe('pk_test_oI7eGSPKEwUseX96bbtPoS0N00niVXASui');
+	stripe3.redirectToCheckout({
+	  // Make the id field from the Checkout Session creation API response
+	  // available to this file, so you can provide it as parameter here
+	  // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
+	  sessionId: session.id
+	}).then(function (result) {
+	  // If `redirectToCheckout` fails due to a browser or network
+	  // error, display the localized error message to your customer
+	  // using `result.error.message`.
+	});*/
 });
 
 

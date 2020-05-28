@@ -60,6 +60,8 @@ html
               .block.stripe
                 form.payout(action='/pilots/stripe/payout', method='POST', autocomplete='off')
                   input(class='primary' type='submit', value='Redeem monthly points' disabled=(balanceAvailable===0))
+                form.payout(action='/cars/buy_view', method='POST', autocomplete='off')
+                  input(class='primary' type='submit', value='Buy Points')
                 
                   a(href='/pilots/stripe/dashboard') View payouts on Stripe
             #filter(style={'max-width':'400px','display':'inline-block'})

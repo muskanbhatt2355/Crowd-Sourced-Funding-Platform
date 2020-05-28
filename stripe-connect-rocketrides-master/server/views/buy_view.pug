@@ -1,0 +1,28 @@
+extends layout
+
+block header
+block content
+  .dashboard
+    .user
+      h1 Buy points for various cars!
+      
+      .block.stripe
+        .block.stripe
+        form.payout(action='/pilots/dashboard', method='GET', autocomplete='off')
+          input(class='primary' type='submit', value='Go back')
+
+  h3 Each card costs $500 and subscribes to 500 points on the selected car.
+  h1.title.short-form Please fill in the details:
+  section.form.login
+    form(action='/cars/buy_points' method='POST', autocomplete='off')
+      fieldset
+        .row(label = 'Choose Car VIN:')
+          select(id = 'vin_id', name='vin_id')
+            option(value='') Select:
+            each car in cars
+              option(name= car.vin_id ,value = car.vin_id) #{car.vin_id}
+        .row(label='Total no. of cards')
+          input(type='number', name='card_num', placeholder='5', required, autofocus)
+      input(class='primary', type='submit', value='Buy points')
+
+              

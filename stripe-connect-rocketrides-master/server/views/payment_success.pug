@@ -1,0 +1,14 @@
+extends layout
+
+block header
+block content
+  .dashboard
+    .user
+      h1 Payment Successful!
+      
+     
+    form.payout(action='/pilots/dashboard', method='GET', autocomplete='off')
+       input(style='max-width:300px' class='primary' type='submit', value='Go back to the Dashboard')
+
+  
+              
