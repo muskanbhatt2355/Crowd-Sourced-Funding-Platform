@@ -74,7 +74,7 @@ PilotSchema.methods.listRecentRides = function() {
 };
 */
 //The above one doesn't work but this below one does. A bit stupid but it does.
-PilotSchema.methods.listRecentRides = async function() {
+/*PilotSchema.methods.listRecentRides = async function() {
   var my_subs_cars = [];
   var resp_my_points = this.car_points_pair;
   console.log(resp_my_points);
@@ -97,6 +97,7 @@ PilotSchema.methods.listRecentRides = async function() {
       //console.log(req_car[0]);
       //await my_subs_cars.push(req_car[0]);
       //resp_my_points.push(this.car_points_pair[car].partner_points);
+      if()
       var req_car2 = new Req_Car({
         car_id: req_car[0].car_id,
         vin_id: req_car[0].vin_id,
@@ -115,6 +116,95 @@ PilotSchema.methods.listRecentRides = async function() {
   }
   //console.log('Your rides begin here!');
   console.log(my_subs_cars);
+  return my_subs_cars;
+};
+*/
+
+PilotSchema.methods.listRecentRides = async function() {
+  var my_subs_cars = [];
+  var resp_my_points = this.car_points_pair;
+  //console.log(resp_my_points);
+  for( let car in this.car_points_pair){
+    
+    //console.log(car);
+    //console.log(this.car_points_pair);
+    //console.log(this.car_points_pair[car].vin_id);
+    const my_cp_pair = this.car_points_pair[car];
+    //console.log("my CP Pair");
+    //console.log(my_cp_pair);
+    await Car.find({'vin_id': this.car_points_pair[car].vin_id },async function (err, req_car){
+      if(err){
+        console.log(err);
+      }
+      //console.log(resp_my_points);
+      //console.log(resp_my_points[car].car_id);
+      //console.log(resp_my_points[car].partner_points);
+      //req_car[0].partner_points = await resp_my_points[car].partner_points;
+      //Object.assign(req_car[0], {'partner_points': resp_my_points[car].partner_points});
+      //console.log(req_car[0]);
+      //await my_subs_cars.push(req_car[0]);
+      //resp_my_points.push(this.car_points_pair[car].partner_points);
+      for( var i in req_car){
+        //console.log("PKMKB");
+       // console.log(this.car_points_pair);
+        //console.log("my CP Pair2");
+        console.log(my_cp_pair);
+        console.log("SUBS YEAR");
+        console.log(req_car[i].year);
+        console.log("BOUGHT YEAR");
+        console.log(parseInt(my_cp_pair.date.getFullYear()));
+        if(req_car[i].year>parseInt(my_cp_pair.date.getFullYear())){
+          console.log("I SHOULDNT BE EXWCUTED!");
+          var req_car2 = new Req_Car({
+          car_id: req_car[i].car_id,
+          vin_id: req_car[i].vin_id,
+          mod_name: req_car[i].mod_name,
+          year: req_car[i].year,
+          month: req_car[i].month,
+          revenue: req_car[i].revenue,
+          total_points: req_car[i].total_points,
+          partner_points: await resp_my_points[car].partner_points,
+          });
+          req_car2.save();
+          //console.log(req_car2);
+          my_subs_cars.push(req_car2);
+        }
+        else if(req_car[i].year==parseInt(my_cp_pair.date.getFullYear())){
+          console.log("Year is the same");
+          var month_list = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+          var j=0;
+          for(var x in month_list){
+            if(req_car[i].month==month_list[x]){
+              j = x;
+              break;
+            }
+          }
+          console.log("subs month");
+          console.log(j);
+          console.log("Points bought month");
+          console.log(parseInt(my_cp_pair.date.getMonth()));
+          if(j>parseInt(my_cp_pair.date.getMonth())){
+            console.log("MUSKAN IS THE BEST!");
+            var req_car2 = new Req_Car({
+            car_id: req_car[i].car_id,
+            vin_id: req_car[i].vin_id,
+            mod_name: req_car[i].mod_name,
+            year: req_car[i].year,
+            month: req_car[i].month,
+            revenue: req_car[i].revenue,
+            total_points: req_car[i].total_points,
+            partner_points: await resp_my_points[car].partner_points,
+            });
+            req_car2.save();
+            //console.log(req_car2);
+            my_subs_cars.push(req_car2);          
+          }
+        }
+      }
+    });
+  }
+  //console.log('Your rides begin here!');
+  //console.log(my_subs_cars);
   return my_subs_cars;
 };
 

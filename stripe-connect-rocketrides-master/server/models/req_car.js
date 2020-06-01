@@ -8,7 +8,7 @@ mongoose.Promise = global.Promise;
 
 // Define the Ride schema.
 const ReqCarSchema = new Schema({
-  car_id:Number,
+  car_id:{ type: Number, unique: false },
   vin_id: String,
   mod_name: String,
   year: Number,

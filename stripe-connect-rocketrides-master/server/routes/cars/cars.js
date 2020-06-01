@@ -181,7 +181,7 @@ const Car_model = require('../../models/car_model');
 			var months = [];
 			var month_list = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 			const present_month = parseInt(new Date().getMonth());
-			for(var i=present_month;i>=0;i--){
+			for(var i in month_list){
 				months.push(month_list[i]);
 			}
 
@@ -536,7 +536,7 @@ router.get('/payment_success', function(req,res){
 	const pilot = req.user;
 	console.log("Tu tapri");
 	console.log(pilot.car_points_pair);
-	pilot.car_points_pair.push({'vin_id':vin_id,'partner_points':partner_points,'date':Date.now});
+	pilot.car_points_pair.push({'vin_id':vin_id,'partner_points':partner_points,'date':Date.now()});
 	console.log("New Tapri");
 	console.log(pilot.car_points_pair);
 	pilot.save();
