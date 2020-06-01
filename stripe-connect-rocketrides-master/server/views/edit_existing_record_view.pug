@@ -1,0 +1,28 @@
+extends admin_layout
+
+block header
+block content
+  .dashboard
+    .user
+      h1 You can easily edit the total revenue for an existing car-month record!
+      
+      .block.stripe
+        .block.stripe
+        form.payout(action='/cars/car_dash', method='GET', autocomplete='off')
+          input(class='primary' type='submit', value='Go back')
+
+  h3 You can also refer to the car dashboard for the required details.
+  h1.title.short-form Fill in the car details required:
+  section.form.login
+    form(action='/cars/edit_existing_record' method='POST', autocomplete='off')
+      fieldset
+        .row(label = 'Choose Subs. ID:')
+          select(id = 'car_id', name='car_id')
+            option(value='') Select:
+            each car in cars
+              option(name= car.car_id ,value = car.car_id) #{car.car_id}
+        .row(label='Total Revenue')
+          input(type='number', name='revenue', placeholder='700 (Value is in $)', required, autofocus)
+      input(class='primary', type='submit', value='Update')
+
+              

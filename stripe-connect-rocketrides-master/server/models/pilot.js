@@ -36,8 +36,9 @@ const PilotSchema = new Schema({
   // Stripe account ID to send payments obtained with Stripe Connect.
   stripeAccountId: String,
   car_points_pair: [{
-    car_id: Number,
+    vin_id: String,
     partner_points: Number,
+    date: Date,
   }],
 });
 

@@ -214,6 +214,33 @@ const Car_model = require('../../models/car_model');
  	});
 
  });
+ router.post('/edit_existing_record_view', function(req,res){
+ 	Car.find({}, function(err, cars){
+		if(err){
+			console.log(err);
+		}
+		else{
+			res.render('edit_existing_record_view',{cars:cars});
+		}
+ 	});
+
+ });
+ router.post('/edit_existing_record', function(req,res){
+ 	Car.findOneAndUpdate({'car_id':req.body.car_id},{'revenue':req.body.revenue},{'upsert':true},function(err, my_car){
+		if(err){
+			console.log(err);
+		}
+		Car.find({}, function(err, cars){
+			if(err){
+				console.log(err);
+			}
+			else{
+				res.render('edit_existing_record_view',{cars:cars});
+			}
+	 	});
+ 	});
+
+ });
  router.post('/car_update', function(req,res){
  	//const filter = {'car_id': req.body.car_id,'mod_name': req.body.mod_name,'month':req.body.month};
  	const filter = {'car_id': req.body.car_id};
@@ -495,6 +522,25 @@ router.post('/payment_success', function(req,res){
 	res.render('payment_success');
  });
 router.get('/payment_success', function(req,res){
+	const query = req.query;
+	console.log("My query here!");
+	console.log(query);
+	/*const params = req.params;
+	console.log("My Params here!");
+	console.log(params);
+	*/
+	const vin_id = query.vin_id;
+	const card_num = query.card_num;
+	const partner_points = 500*card_num;
+
+	const pilot = req.user;
+	console.log("Tu tapri");
+	console.log(pilot.car_points_pair);
+	pilot.car_points_pair.push({'vin_id':vin_id,'partner_points':partner_points,'date':Date.now});
+	console.log("New Tapri");
+	console.log(pilot.car_points_pair);
+	pilot.save();
+	//pilot.car_points_pair.append({'vin_id':vin_id,'partner_points':partner_points});
 	res.render('payment_success');
  });
 router.post('/payment_failure', function(req,res){
@@ -506,6 +552,8 @@ router.get('/payment_failure', function(req,res){
 
 router.post('/buy_points', async function(req,res){
 	const stripe = require('stripe')('sk_test_rZ5sztZvwHNJHN1IlyNyn3uM00PlJIr9I7');
+	var VIN_ID = req.body.vin_id;
+	var CARD_NUM = req.body.card_num;
 
 	const session = await stripe.checkout.sessions.create({
 	  payment_method_types: ['card'],
@@ -514,7 +562,7 @@ router.post('/buy_points', async function(req,res){
 	    quantity: req.body.card_num,
 	  }],
 	  mode: 'payment',
-	  success_url: 'http://localhost:3000/cars/payment_success?session_id={CHECKOUT_SESSION_ID}',
+	  success_url: `http://localhost:3000/cars/payment_success?session_id={CHECKOUT_SESSION_ID}&vin_id=${VIN_ID}&card_num=${CARD_NUM}`,
 	  cancel_url: 'http://localhost:3000/cars/payment_failure',
 	});
 	console.log(session);

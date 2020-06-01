@@ -20,7 +20,9 @@ block content
           select(id = 'vin_id', name='vin_id')
             option(value='') Select:
             each car in cars
-              option(name= car.vin_id ,value = car.vin_id) #{car.vin_id}
+              option(name= car.vin_id ,value = car.vin_id) #{car.vin_id} - #{car.mod_name}
+        
+
         .row(label='Total no. of cards')
           input(type='number', name='card_num', placeholder='5', required, autofocus)
       input(class='primary', type='submit', value='Buy points')

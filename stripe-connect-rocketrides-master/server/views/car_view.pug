@@ -39,6 +39,9 @@ html
         form.payout(action='/cars/add_new_record', method='POST', autocomplete='off')
                   input(class='primary' type='submit', value='Add a new month record')
       .div
+        form.payout(action='/cars/edit_existing_record_view', method='POST', autocomplete='off')
+                  input(class='primary' type='submit', value='Edit existing month record')
+      .div
         form.payout(action='/cars/delete_options', method='POST', autocomplete='off')
                   input(class='primary' type='submit', value='Delete a record')
       .div

@@ -21,7 +21,6 @@ html
     script(type='text/javascript',src='https://js.stripe.com/v3/')
     script(type='text/javascript').
       var stripe = Stripe('pk_test_oI7eGSPKEwUseX96bbtPoS0N00niVXASui');
-      console.log('Bhattu')
       stripe.redirectToCheckout({
         sessionId: '#{ session.id }'
       }).then(function (result) {

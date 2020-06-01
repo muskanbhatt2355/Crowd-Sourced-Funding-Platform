@@ -83,7 +83,7 @@ html
             section.rides
               
               h3(style={'font-family': 'Arial','letter-spacing': '2px','color':'#8798ab'}) Your subscriptions:
-              div(style={'width':'1800px','overflow-x':'scroll'})
+              div(style={'width':'800px','overflow-x':'scroll'})
                 if rides.length == 0
                   .no-rides
                     .rocket
@@ -92,25 +92,15 @@ html
                 else
                   .list
                     .row
-                      .cell Subs.ID
                       .cell Car ID
                       .cell Car Model
-                      .cell Subscription Year
                       .cell Subscription Month
-                      .cell Your Points
-                      .cell Total Points
-                      .cell Total Mothly Revenue
                       .cell Your Amount
                     each ride in rides
                       .row
-                        .cell.my_id #{ride.car_id}
                         .cell.my_vin #{ride.vin_id}
                         .cell.my_name #{ride.mod_name}
-                        .cell.my_year #{ride.year}
                         .cell.my_month #{ride.month}
-                        .cell.my_points #{ride.partner_points}
-                        .cell.all_points #{ride.total_points}
-                        .cell.my_revenue $#{ride.revenue}
                         .cell.price $#{(ride.amountForPilot()).toFixed(2)}
                       
 
