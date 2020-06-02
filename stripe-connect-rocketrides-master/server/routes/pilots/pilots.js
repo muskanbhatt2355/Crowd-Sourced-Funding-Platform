@@ -60,6 +60,8 @@ router.get('/dashboard', pilotRequired, async (req, res) => {
     }
   }
   console.log(req_months);
+  console.log("Here is my balance");
+  console.log(balance);
 
   // There is one balance for each currencies used: as this 
   // demo app only uses USD we'll just use the first object

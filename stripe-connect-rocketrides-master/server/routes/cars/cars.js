@@ -11,6 +11,7 @@ const Ride = require('../../models/ride');
 const Passenger = require('../../models/passenger');
 const Car = require('../../models/car');
 const Car_model = require('../../models/car_model');
+const Req_Car = require('../../models/req_car');
 
 
 
@@ -478,23 +479,50 @@ router.post('/add_record', function(req,res){
 		    // As a new car is created we also need to add charges of amount = amountforpilot() to each pilots stripe id
 
 				    for (const pilot of pilots) {
-				    	var source = 'tok_bypassPending';
+				    	const list = pilot.car_points_pair;
+				    	for( const dict of list){
+				    		if(dict.vin_id==car.vin_id){
+				    			var month_list = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+				    			var j=0;
+				    			for(var x in month_list){
+				    				if(car.month==month_list[x]){
+				    					j=x;
+				    					break;
+				    				}
+				    			}
+				    			if(j>parseInt(dict.date.getMonth())){
+				    				var req_car2 = new Req_Car({
+								        car_id: req.body.car_id,
+									    vin_id: req.body.vin_id,
+									    mod_name: mod_name,
+									    year: req.body.year,
+									    month: req.body.month,
+									    revenue: req.body.revenue,
+									    total_points: total_points,
+								        partner_points: dict.partner_points,
+								        });
+								    req_car2.save();
+				    				var source = 'tok_bypassPending';
 
-				    	const charge = await stripe.charges.create({
-					      source: source,
-					      amount: car.amountForPilot(),
-					      currency: 'usd',
-					      description: config.appName,
-					      statement_descriptor: config.appName,
-					      // The destination parameter directs the transfer of funds from platform to pilot
-					      transfer_data: {
-					        // Send the amount for the pilot after collecting a 20% platform fee:
-					        // the `amountForPilot` method simply computes `ride.amount * 0.8`
-					        amount: car.amountForPilot(),
-					        // The destination of this charge is the pilot's Stripe account
-					        destination: pilot.stripeAccountId,
-					      },
-					    });
+							    	const charge = await stripe.charges.create({
+								      source: source,
+								      amount: req_car2.amountForPilot(),
+								      currency: 'usd',
+								      description: config.appName,
+								      statement_descriptor: config.appName,
+								      // The destination parameter directs the transfer of funds from platform to pilot
+								      transfer_data: {
+								        // Send the amount for the pilot after collecting a 20% platform fee:
+								        // the `amountForPilot` method simply computes `ride.amount * 0.8`
+								        amount: req_car2.amountForPilot(),
+								        // The destination of this charge is the pilot's Stripe account
+								        destination: pilot.stripeAccountId,
+								      },
+								    });
+				    			}
+				    			
+				    		}
+				    	}
 					    //car.stripeChargeId = charge.id;
 	    				//car.save();
 				    }
