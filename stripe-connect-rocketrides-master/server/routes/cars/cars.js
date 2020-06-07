@@ -12,6 +12,7 @@ const Passenger = require('../../models/passenger');
 const Car = require('../../models/car');
 const Car_model = require('../../models/car_model');
 const Req_Car = require('../../models/req_car');
+const Subs_id = require('../../models/subs_id_list');
 
 
 
@@ -173,7 +174,7 @@ const Req_Car = require('../../models/req_car');
 			console.log(err);
 		}
 		else{
-			var years = [];
+			/*var years = [];
 			const present_year = parseInt(new Date().getFullYear());
 			for(var i=0; i<4;i++){
 				years.push(present_year-i);
@@ -187,6 +188,18 @@ const Req_Car = require('../../models/req_car');
 			}
 
 			res.render('edit_view',{cars:cars,years:years,months:months});
+			*/
+			const present_year = parseInt(new Date().getFullYear());
+			const present_month = parseInt(new Date().getMonth());
+			var months = [];
+			var month_list = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+			for(var i in month_list){
+				if(i==present_month){
+					break;
+				}
+				months.push(month_list[i]);
+			}
+			res.render('edit_view',{cars:cars,present_year:present_year,months:months});
 		}
  	});
 
@@ -384,11 +397,12 @@ router.post('/delete_car', function(req,res){
  	//const filter = {'car_id': req.body.car_id,'mod_name': req.body.mod_name,'month':req.body.month};
  	const filter = {'vin_id': req.body.vin_id};
 
- 	Car.deleteMany(filter, function(err, results){
+ 	/*Car.deleteMany(filter, function(err, results){
  		if(err){
  			console.log(err);
  		}
  	});
+ 	*/
 
 	Car_model.findOneAndDelete(filter, function(err, doc) {
 	    if (err) return res.send(500, {error: err});
@@ -446,16 +460,96 @@ router.post('/add_record', function(req,res){
 		const mod_name = req_model[0].mod_name;
 		const total_points = req_model[0].total_points;
 
-		const car = new Car({
-		    car_id: req.body.car_id,
-		    vin_id: req.body.vin_id,
-		    mod_name: mod_name,
-		    year: req.body.year,
-		    month: req.body.month,
-		    revenue: req.body.revenue,
-		    total_points: total_points
-	     });
-		car.save();
+		Subs_id.find({},function(err,subs_id){
+			const car_id = subs_id[0].car_id + 1;
+
+			Subs_id.findOneAndUpdate({},{'car_id': car_id},{upsert:false},function(err,result){
+				if(err){
+					console.log("M not working");
+				}
+				else{
+					console.log(car_id);
+				}
+			});
+
+			const car = new Car({
+			    car_id: car_id,
+			    vin_id: req.body.vin_id,
+			    mod_name: mod_name,
+			    year: req.body.year,
+			    month: req.body.month,
+			    revenue: req.body.revenue,
+			    total_points: total_points
+		     });
+			car.save();
+			Pilot.find({}, async function(err, pilots){
+				if(err){
+					console.log(err);
+				}
+				else{
+					console.log(pilots);
+					//Car.findOneAndUpdate(filter, update, {upsert: true}, async function(err, doc) {
+			    		//if (err) return res.send(err);
+			    // As a new car is created we also need to add charges of amount = amountforpilot() to each pilots stripe id
+
+					    for (const pilot of pilots) {
+					    	const list = pilot.car_points_pair;
+					    	for( const dict of list){
+					    		if(dict.vin_id==car.vin_id){
+					    			var month_list = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+					    			var j=0;
+					    			for(var x in month_list){
+					    				if(car.month==month_list[x]){
+					    					j=x;
+					    					break;
+					    				}
+					    			}
+					    			if(j>parseInt(dict.date.getMonth())){
+					    				var req_car2 = new Req_Car({
+									        car_id: car_id,
+										    vin_id: req.body.vin_id,
+										    mod_name: mod_name,
+										    year: req.body.year,
+										    month: req.body.month,
+										    revenue: req.body.revenue,
+										    total_points: total_points,
+									        partner_points: dict.partner_points,
+									        });
+									    req_car2.save();
+					    				var source = 'tok_bypassPending';
+
+								    	const charge = await stripe.charges.create({
+									      source: source,
+									      amount: req_car2.amountForPilot(),
+									      currency: 'usd',
+									      description: config.appName,
+									      statement_descriptor: config.appName,
+									      // The destination parameter directs the transfer of funds from platform to pilot
+									      transfer_data: {
+									        // Send the amount for the pilot after collecting a 20% platform fee:
+									        // the `amountForPilot` method simply computes `ride.amount * 0.8`
+									        amount: req_car2.amountForPilot(),
+									        // The destination of this charge is the pilot's Stripe account
+									        destination: pilot.stripeAccountId,
+									      },
+									    });
+					    			}
+					    			
+					    		}
+					    	}
+						    //car.stripeChargeId = charge.id;
+		    				//car.save();
+					    }
+
+			    		//return res.redirect('../../cars/car_dash');
+			    		return res.redirect('../../cars/car_dash');
+					//});
+				}
+	 	});
+
+		});
+
+		
  	//return res.redirect('../../cars/add_new_record');
 
 	//});
@@ -468,70 +562,7 @@ router.post('/add_record', function(req,res){
 		
 	});*/
 	
-		Pilot.find({}, async function(err, pilots){
-			if(err){
-				console.log(err);
-			}
-			else{
-				console.log(pilots);
-				//Car.findOneAndUpdate(filter, update, {upsert: true}, async function(err, doc) {
-		    		//if (err) return res.send(err);
-		    // As a new car is created we also need to add charges of amount = amountforpilot() to each pilots stripe id
-
-				    for (const pilot of pilots) {
-				    	const list = pilot.car_points_pair;
-				    	for( const dict of list){
-				    		if(dict.vin_id==car.vin_id){
-				    			var month_list = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-				    			var j=0;
-				    			for(var x in month_list){
-				    				if(car.month==month_list[x]){
-				    					j=x;
-				    					break;
-				    				}
-				    			}
-				    			if(j>parseInt(dict.date.getMonth())){
-				    				var req_car2 = new Req_Car({
-								        car_id: req.body.car_id,
-									    vin_id: req.body.vin_id,
-									    mod_name: mod_name,
-									    year: req.body.year,
-									    month: req.body.month,
-									    revenue: req.body.revenue,
-									    total_points: total_points,
-								        partner_points: dict.partner_points,
-								        });
-								    req_car2.save();
-				    				var source = 'tok_bypassPending';
-
-							    	const charge = await stripe.charges.create({
-								      source: source,
-								      amount: req_car2.amountForPilot(),
-								      currency: 'usd',
-								      description: config.appName,
-								      statement_descriptor: config.appName,
-								      // The destination parameter directs the transfer of funds from platform to pilot
-								      transfer_data: {
-								        // Send the amount for the pilot after collecting a 20% platform fee:
-								        // the `amountForPilot` method simply computes `ride.amount * 0.8`
-								        amount: req_car2.amountForPilot(),
-								        // The destination of this charge is the pilot's Stripe account
-								        destination: pilot.stripeAccountId,
-								      },
-								    });
-				    			}
-				    			
-				    		}
-				    	}
-					    //car.stripeChargeId = charge.id;
-	    				//car.save();
-				    }
-
-		    		//return res.redirect('../../cars/car_dash');
-		    		return res.redirect('../../cars/add_new_record');
-				//});
-			}
-	 	});
+		
  	});
  	
 	
@@ -559,12 +590,13 @@ router.get('/payment_success', function(req,res){
 	*/
 	const vin_id = query.vin_id;
 	const card_num = query.card_num;
+	const mod_name = query.mod_name;
 	const partner_points = 500*card_num;
 
 	const pilot = req.user;
 	console.log("Tu tapri");
 	console.log(pilot.car_points_pair);
-	pilot.car_points_pair.push({'vin_id':vin_id,'partner_points':partner_points,'date':Date.now()});
+	pilot.car_points_pair.push({'vin_id':vin_id,'mod_name':mod_name,'partner_points':partner_points,'date':Date.now()});
 	console.log("New Tapri");
 	console.log(pilot.car_points_pair);
 	pilot.save();
@@ -583,18 +615,24 @@ router.post('/buy_points', async function(req,res){
 	var VIN_ID = req.body.vin_id;
 	var CARD_NUM = req.body.card_num;
 
-	const session = await stripe.checkout.sessions.create({
-	  payment_method_types: ['card'],
-	  line_items: [{
-	    price: 'price_HM5BUob6PEQPwM',
-	    quantity: req.body.card_num,
-	  }],
-	  mode: 'payment',
-	  success_url: `http://localhost:3000/cars/payment_success?session_id={CHECKOUT_SESSION_ID}&vin_id=${VIN_ID}&card_num=${CARD_NUM}`,
-	  cancel_url: 'http://localhost:3000/cars/payment_failure',
+	Car_model.find({'vin_id':VIN_ID}, async function(err,car_model){
+		var MOD_NAME = car_model[0].mod_name;
+
+		const session = await stripe.checkout.sessions.create({
+		  payment_method_types: ['card'],
+		  line_items: [{
+		    price: 'price_HM5BUob6PEQPwM',
+		    quantity: req.body.card_num,
+		  }],
+		  mode: 'payment',
+		  success_url: `http://localhost:3000/cars/payment_success?session_id={CHECKOUT_SESSION_ID}&vin_id=${VIN_ID}&card_num=${CARD_NUM}&mod_name=${MOD_NAME}`,
+		  cancel_url: 'http://localhost:3000/cars/payment_failure',
+		});
+		console.log(session);
+		res.render('react_checkout',{session:session});
 	});
-	console.log(session);
-	res.render('react_checkout',{session:session});
+
+	
 	/*const stripe2 = require('stripe');
 	var stripe3 = window.Stripe('pk_test_oI7eGSPKEwUseX96bbtPoS0N00niVXASui');
 	stripe3.redirectToCheckout({

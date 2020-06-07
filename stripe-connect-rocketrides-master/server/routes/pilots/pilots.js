@@ -63,6 +63,8 @@ router.get('/dashboard', pilotRequired, async (req, res) => {
   console.log("Here is my balance");
   console.log(balance);
 
+  const car_points_pair = pilot.car_points_pair;
+
   // There is one balance for each currencies used: as this 
   // demo app only uses USD we'll just use the first object
   res.render('dashboard', {
@@ -74,6 +76,7 @@ router.get('/dashboard', pilotRequired, async (req, res) => {
     req_months: req_months,
     req_years: req_years,
     showBanner: !!showBanner || req.query.showBanner,
+    car_points_pair:car_points_pair,
   });
 });
 

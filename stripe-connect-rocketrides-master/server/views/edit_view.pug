@@ -9,25 +9,21 @@ block content
       .block.stripe
         .block.stripe
         form.payout(action='/cars/car_dash', method='GET', autocomplete='off')
-          input(class='primary' type='submit', value='Go back')
+          input(class='primary' type='submit', value='Home')
 
   h3 You can also refer to the car dashboard for the required details.
   h1.title.short-form Fill in the car details required:
   section.form.login
     form(action='/cars/add_record' method='POST', autocomplete='off')
       fieldset
-        .row(label='Subs.ID')
-          input(type='number', name='car_id', placeholder='50', required, autofocus)
         .row(label = 'Choose Car VIN:')
           select(id = 'vin_id', name='vin_id')
             option(value='') Select:
             each car in cars
-              option(name= car.vin_id ,value = car.vin_id) #{car.vin_id}
+              option(name= car.vin_id ,value = car.vin_id) #{car.vin_id} - #{car.mod_name}
         .row(label = 'Year')
           select(id = 'year', name='year')
-            option(value='') Select:
-            each year in years
-              option(name= year ,value = year) #{year}
+            option(name=year, value=present_year) #{present_year}
         .row(label = 'Month')
           select(id = 'month', name='month')
             option(value='') Select:

@@ -37,6 +37,7 @@ const PilotSchema = new Schema({
   stripeAccountId: String,
   car_points_pair: [{
     vin_id: String,
+    mod_name: String,
     partner_points: Number,
     date: Date,
   }],

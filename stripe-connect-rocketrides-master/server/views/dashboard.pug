@@ -82,7 +82,7 @@ html
                     input(class='primary', type='submit', value='Apply')
             section.rides
               
-              h3(style={'font-family': 'Arial','letter-spacing': '2px','color':'#8798ab'}) Your subscriptions:
+              h3(style={'font-family': 'Arial','letter-spacing': '2px','color':'#8798ab'}) Your monthly subscriptions:
               div(style={'width':'800px','overflow-x':'scroll'})
                 if rides.length == 0
                   .no-rides
@@ -102,6 +102,26 @@ html
                         .cell.my_name #{ride.mod_name}
                         .cell.my_month #{ride.month}
                         .cell.price $#{(ride.amountForPilot()).toFixed(2)}
+              h3(style={'font-family': 'Arial','letter-spacing': '2px','color':'#8798ab'}) Your car-wise subscribed points
+              div(style={'width':'800px','overflow-x':'scroll'})
+                if car_points_pair.length == 0
+                  .no-rides
+                    .rocket
+                    h1 No subscriptions to display yet!
+                    h2 Subscribe some points!
+                else
+                  .list
+                    .row
+                      .cell Car ID
+                      .cell Car Model
+                      .cell Your Points
+                      .cell Date of Subs.
+                    each ride in car_points_pair
+                      .row
+                        .cell.my_vin #{ride.vin_id}
+                        .cell.my_name #{ride.mod_name}
+                        .cell.my_month #{ride.partner_points}
+                        .cell.price #{ride.date}
                       
 
 
