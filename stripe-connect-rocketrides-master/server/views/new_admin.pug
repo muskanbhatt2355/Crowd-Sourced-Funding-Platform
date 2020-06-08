@@ -1,12 +1,13 @@
 extends layout
 
 block content
-  h1.title.short-form Log in to the admin account
+  h1.title.short-form Become an admin
   section.form.adlogin
-    form(action='/admin2/admin_login', method='POST', autocomplete='off')
+    form(action='/admin2/add_admin', method='POST', autocomplete='off')
       fieldset
         .row(label='Email')
           input(type='email', name='email', placeholder='john@example.com', required, autofocus)
         .row(label='Password')
           input(type='password', name='password', placeholder='••••••••', required)
-      input(class='primary', type='submit',name='adlogin' value='Log in')
+      input(class='primary', type='submit',name='new_admin' value='Create')
+

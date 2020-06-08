@@ -74,6 +74,7 @@ app.use('/pilots', require('./routes/pilots/pilots'));
 app.use('/pilots/stripe', require('./routes/pilots/stripe'));
 
 app.use('/admins', require('./routes/admins/admins'));
+app.use('/admin2', require('./routes/admin2/admin2'));
 app.use('/cars',require('./routes/cars/cars'));
 
 // API routes for rides and passengers used by the mobile app
